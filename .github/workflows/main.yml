@@ -1,0 +1,70 @@
+name: Sync to Mirror Repository
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get repository name
+        run: |
+          REPO_NAME=${GITHUB_REPOSITORY#*/}
+          echo "Repository Name: $REPO_NAME"
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+
+      - name: Get branch name
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "Branch Name: $BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Get commit information
+        id: commit_info
+        run: |
+          HASH=${GITHUB_SHA}
+          AUTHOR=${GITHUB_ACTOR}
+          MESSAGE=$(git log -1 --pretty=format:"%s")
+          echo "Commit Hash: $COMMIT_HASH"
+          echo "Commit Author: $COMMIT_AUTHOR"
+          echo "Commit Message: $COMMIT_MESSAGE"
+          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
+          echo "COMMIT_AUTHOR=$COMMIT_AUTHOR" >> $GITHUB_ENV
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
+
+      - name: Get user email
+        id: user_email
+        run: |
+          USERNAME=${GITHUB_ACTOR}
+          USER_EMAIL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/users/$USERNAME" | jq -r .email)
+          echo "User Email: $USER_EMAIL"
+          echo "USER_EMAIL=$USER_EMAIL" >> $GITHUB_ENV
+      
+      - name: Setup SSH keys
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Checkout mirror repository
+        run: |
+          git clone git@github.com:${GITHUB_ACTOR}/${REPO_NAME}_${BRANCH_NAME}_sync.git
+          git fetch --unshallow
+          cd ${REPO_NAME}_${BRANCH_NAME}_sync
+          git checkout $BRANCH_NAME
+  
+      - name: Merge and Push
+        run: |
+          cd ${REPO_NAME}_${BRANCH_NAME}_sync
+          git config pull.rebase false
+          git config --global user.email "${USER_EMAIL}"
+          git config --global user.name "$USERNAME"
+          git pull ../ ${BRANCH_NAME}
+          git push origin ${BRANCH_NAME}
