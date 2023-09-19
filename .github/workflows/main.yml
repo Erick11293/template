@@ -28,9 +28,28 @@ jobs:
           echo "Branch Name: $BRANCH_NAME"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
+      - name: Test SSH Token
+        run: |
+          # Set up SSH configuration
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+          # Attempt to SSH into GitHub
+          ssh -T git@github.com
+
+          # Check the SSH exit code
+          if [ $? -eq 1 ]; then
+            echo "SSH Token Test Failed"
+            exit 1
+          else
+            echo "SSH Token Test Passed"
+          fi
+      
       - name: Get user email
         id: user_email
         run: |
-          USER_EMAIL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/users/$USERNAME" | jq -r .email)
+          USER_EMAIL=$(curl -s -H "Authorization: token ${{ secrets.SSH_PRIVATE_KEY }}" "https://api.github.com/users/$USERNAME" | jq -r .email)
           echo "User Email: $USER_EMAIL"
           echo "USER_EMAIL=$USER_EMAIL" >> $GITHUB_ENV
