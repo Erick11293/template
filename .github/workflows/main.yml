@@ -43,11 +43,9 @@ jobs:
 
       - name: Check if the branch exist sand create it if not
         run: |
-          ls
-          ls ..
-          pwd
-          git clone git@github.com:${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync.git external-repo
-          cd external-repo
+
+          git clone git@github.com:${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync.git ../external-repo
+          cd ../external-repo
           
           # Attempt to fetch the branch
           if git fetch origin $BRANCH_NAME; then
@@ -55,10 +53,10 @@ jobs:
           else
             echo "Branch $BRANCH_NAME does not exist in $REPO_NAME. Creating..."
             # Add commands to create the branch using git
-            cd ..
+            cd ../${REPO_NAME}
             git remote add ${REPO_NAME} https://github.com/{USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync
             
-            git push ${REPO_NAME} $BRANCH_NAME
+            git push ${REPO_NAME} ${BRANCH_NAME}
             echo "Branch $BRANCH_NAME created in $REPO_NAME."
           fi
       
