@@ -55,7 +55,7 @@ jobs:
 
       - name: Checkout mirror repository
         run: |
-          git clone git@github.com:${GITHUB_ACTOR}/${REPO_NAME}_${BRANCH_NAME}_sync.git
+          git clone git@github.com:${COMMIT_AUTHOR}/${REPO_NAME}_${BRANCH_NAME}_sync.git
           git fetch --unshallow
           cd ${REPO_NAME}_${BRANCH_NAME}_sync
           git checkout $BRANCH_NAME
