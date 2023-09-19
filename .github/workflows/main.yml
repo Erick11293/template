@@ -12,7 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      
+      - name: Setup SSH keys
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -27,7 +33,6 @@ jobs:
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           echo "Branch Name: $BRANCH_NAME"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-
       
       - name: Get user email
         run: |
