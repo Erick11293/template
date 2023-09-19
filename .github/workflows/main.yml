@@ -50,11 +50,12 @@ jobs:
           # Attempt to fetch the branch
           if git fetch origin $BRANCH_NAME; then
             echo "Branch $BRANCH_NAME already exists in $REPO_NAME."
+            cd ../${REPO_NAME}
           else
             echo "Branch $BRANCH_NAME does not exist in $REPO_NAME. Creating..."
             # Add commands to create the branch using git
             cd ../${REPO_NAME}
-            git remote add ${REPO_NAME} https://github.com/{USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync
+            git remote add ${REPO_NAME} https://github.com/${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync
             
             git push ${REPO_NAME} ${BRANCH_NAME}
             echo "Branch $BRANCH_NAME created in $REPO_NAME."
