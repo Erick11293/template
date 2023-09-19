@@ -43,7 +43,7 @@ jobs:
 
       - name: Check if the branch existsand create it if not
         run: |
-          git ls-remote git@github.com:${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync.git $BRANCH_NAME
+          git ls-remote git@github.com:${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync.git/$BRANCH_NAME
 
           if [ $? -eq 0 ]; then
             echo "Branch $BRANCH_NAME already exists in $REPO_NAME."
