@@ -41,17 +41,17 @@ jobs:
           echo "User Email: $USER_EMAIL"
           echo "USER_EMAIL=$USER_EMAIL" >> $GITHUB_ENV
 
-      - name: Check if the branch existsand create it if not
+      - name: Check if the branch exist sand create it if not
         run: |
-          git ls-remote git@github.com:${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync.git/$BRANCH_NAME
+          git clone git@github.com:${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync.git external-repo
+          cd external-repo
 
-          if [ $? -eq 0 ]; then
+          # Attempt to fetch the branch
+          if git fetch origin $BRANCH_NAME; then
             echo "Branch $BRANCH_NAME already exists in $REPO_NAME."
           else
             echo "Branch $BRANCH_NAME does not exist in $REPO_NAME. Creating..."
             # Add commands to create the branch using git
-            git clone git@github.com:${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync.git external-repo
-            cd external-repo
             git checkout -b $BRANCH_NAME
             git push origin $BRANCH_NAME
             echo "Branch $BRANCH_NAME created in $REPO_NAME."
