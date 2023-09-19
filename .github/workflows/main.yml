@@ -56,7 +56,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: '${BRANCH_NAME}'
+          ref: ${BRANCH_NAME}
 
       - name: Checkout mirror repository
         run: |
