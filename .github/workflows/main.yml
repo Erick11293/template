@@ -4,7 +4,7 @@ on:
       - '*'
 env:
   REPO_BRANCH: ${{ github.ref }}
-  NAME: ${{ github.actor }}
+  USERNAME: ${{ github.actor }}
   EVENT: ${{ github.event_name }}
   
 jobs:
@@ -28,23 +28,9 @@ jobs:
           echo "Branch Name: $BRANCH_NAME"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
-      - name: Get commit information
-        id: commit_info
-        run: |
-          HASH=${GITHUB_SHA}
-          AUTHOR=${GITHUB_ACTOR}
-          MESSAGE=$(git log -1 --pretty=format:"%s")
-          echo "Commit Hash: $COMMIT_HASH"
-          echo "Commit Author: $COMMIT_AUTHOR"
-          echo "Commit Message: $COMMIT_MESSAGE"
-          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
-          echo "COMMIT_AUTHOR=$COMMIT_AUTHOR" >> $GITHUB_ENV
-          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
-
       - name: Get user email
         id: user_email
         run: |
-          USERNAME=${GITHUB_ACTOR}
           USER_EMAIL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/users/$USERNAME" | jq -r .email)
           echo "User Email: $USER_EMAIL"
           echo "USER_EMAIL=$USER_EMAIL" >> $GITHUB_ENV
