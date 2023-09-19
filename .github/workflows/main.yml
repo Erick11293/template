@@ -30,8 +30,15 @@ jobs:
 
       
       - name: Get user email
-        id: user_email
         run: |
           USER_EMAIL=$(curl -s -H "Authorization: token ${{ secrets.SSH_PRIVATE_KEY }}" "https://api.github.com/users/$USERNAME" | jq -r .email)
           echo "User Email: $USER_EMAIL"
           echo "USER_EMAIL=$USER_EMAIL" >> $GITHUB_ENV
+
+      - name: Checkout mirror repository
+        run: |
+          git clone git@github.com:${USERNAME}/${REPO_NAME}_${BRANCH_NAME}_sync.git
+          git fetch --unshallow
+          cd ${REPO_NAME}_${BRANCH_NAME}_sync
+          git checkout $BRANCH_NAME
+
