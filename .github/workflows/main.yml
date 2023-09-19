@@ -31,7 +31,7 @@ jobs:
         id: commit_info
         run: |
           HASH=${GITHUB_SHA}
-          AUTHOR=${GITHUB_ACTOR}
+          AUTHOR=${{ github.actor }}
           MESSAGE=$(git log -1 --pretty=format:"%s")
           echo "Commit Hash: $COMMIT_HASH"
           echo "Commit Author: $COMMIT_AUTHOR"
