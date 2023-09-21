@@ -1,0 +1,46 @@
+name: Sync to Mirror Repository
+on:
+  push:
+    branches:
+      - '*'
+env:
+
+  
+  EMAIL: erickom@stanford.edu
+  REPO_BRANCH: ${{ github.ref }}
+  USERNAME: ${{ github.actor }}
+
+  
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+
+    - name: Setup SSH keys
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ env.REPO_BRANCH }}
+
+    - name: Checkout mirror repository
+      run: |
+        git clone git@github.com:$USERNAME/${GITHUB_REPOSITORY#*/}_${GITHUB_REF#refs/heads/}_sync.git
+        git fetch --unshallow
+        cd ${GITHUB_REPOSITORY#*/}_${GITHUB_REF#refs/heads/}_sync
+        git checkout ${GITHUB_REF#refs/heads/}
+
+    - name: Merge and Push
+      run: |
+        cd ${GITHUB_REPOSITORY#*/}_${GITHUB_REF#refs/heads/}_sync
+        git config pull.rebase false
+        git config --global user.email $EMAIL
+        git config --global user.name $USERNAME
+        git pull ../ ${GITHUB_REF#refs/heads/}
+        git push origin ${GITHUB_REF#refs/heads/}
