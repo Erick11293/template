@@ -6,7 +6,7 @@ on:
 env:
 
   
-  EMAIL: erickom@stanford.edu
+  EMAIL: ${{ secrets.email }}
   REPO_BRANCH: ${{ github.ref }}
   USERNAME: ${{ github.actor }}
 
