@@ -8,7 +8,7 @@ env:
   
   EMAIL: erickom@stanford.edu
   REPO_BRANCH: ${{ github.ref }}
-  USERNAME: ${{ github.actor }}
+  USERNAME: ${{ secrets.email }}
 
   
 jobs:
