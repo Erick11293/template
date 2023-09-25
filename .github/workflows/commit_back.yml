@@ -2,7 +2,13 @@ name: Sync Back to Dev Branch
 on:
   push:
     branches:
-      - '*_sync'
+      - '*'
+
+env:  
+  EMAIL: ${{ secrets.email }}
+  REPO_BRANCH: ${{ github.ref }}
+  USERNAME: ${{ github.actor }}
+
 
 jobs:
   sync_back:
@@ -13,6 +19,8 @@ jobs:
     - name: Set globals
       run: |
         echo 'Prueba'
+        echo ${GITHUB_REF#refs/heads/}
+        echo ${GITHUB_REF#refs/heads/::-4}
         
     - name: Setup SSH keys
       run: |
@@ -24,20 +32,20 @@ jobs:
     - name: Checkout code from mirror
       uses: actions/checkout@v2
       with:
-        ref: '<master_branch_name>'
+        ref: ${{ env.REPO_BRANCH }}
 
     - name: Checkout dev branch
       run: |
-        git clone git@github.com:<original_repo_username>/<project_name>.git
+        git clone git@github.com:${USERNAME}/<project_name>.git
         git fetch --unshallow
         cd <project_name>
-        git checkout <issue_branch_name>
-
+        git checkout ${GITHUB_REF#refs/heads/}
+        
     - name: Merge and Push
       run: |
         cd <project_name>
         git config pull.rebase false
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your GitHub Username"
-        git pull ../ <master_branch_name>
-        git push origin <issue_branch_name>
+        git config --global user.email $EMAIL
+        git config --global user.name $USERNAME
+        git pull ../ ${GITHUB_REF#refs/heads/}
+        git push origin ${GITHUB_REF#refs/heads/}
