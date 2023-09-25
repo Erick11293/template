@@ -20,8 +20,9 @@ jobs:
       run: |
         echo 'Prueba'
         echo ${GITHUB_REF#refs/heads/}
-        a=${GITHUB_REF#refs/heads/}
-        echo ${a::-4}
+        repo=${GITHUB_REPOSITORY#*/}
+        original_repo_issue=${a::-4}
+        echo ${original_repo_issue}
         
     - name: Setup SSH keys
       run: |
