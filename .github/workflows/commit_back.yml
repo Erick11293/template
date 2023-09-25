@@ -22,7 +22,7 @@ jobs:
         echo ${GITHUB_REF#refs/heads/}
         repo=${GITHUB_REPOSITORY#*/}
         original_repo_issue=${repo::-4}
-        issue_name = ${GITHUB_REF#refs/heads/}
+        issue_name=${GITHUB_REF#refs/heads/}
         echo ${#issue_name}
         echo ${original_repo_issue}
         
