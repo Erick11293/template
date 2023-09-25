@@ -21,10 +21,12 @@ jobs:
         echo 'Prueba'
         echo ${GITHUB_REF#refs/heads/}
         repo=${GITHUB_REPOSITORY#*/}
-        original_repo_issue=${repo::-4}
+        original_repo_issue=${repo::-5}
         issue_name=${GITHUB_REF#refs/heads/}
-        echo ${#issue_name}
+        len_issue=-${#issue_name}-1
+        original_project={$original_repo_issue::$len_issue}
         echo ${original_repo_issue}
+        echo ${original_project}
         
     - name: Setup SSH keys
       run: |
