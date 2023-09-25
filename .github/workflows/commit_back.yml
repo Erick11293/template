@@ -23,9 +23,8 @@ jobs:
         repo=${GITHUB_REPOSITORY#*/}
         original_repo_issue=${repo::-4}
         issue_name = ${GITHUB_REF#refs/heads/}
-        len_issue = ${#issue_name}
+        echo ${#issue_name}
         echo ${original_repo_issue}
-        echo ${len_issue}
         
     - name: Setup SSH keys
       run: |
