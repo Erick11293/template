@@ -23,7 +23,7 @@ jobs:
         repo=${GITHUB_REPOSITORY#*/}
         original_repo_issue=${repo::-5}
         issue_name=${GITHUB_REF#refs/heads/}
-        len_issue=-${#issue_name}-1
+        len_issue=$(( -${#issue_name}-1 ))
         original_project={$original_repo_issue::$len_issue}
         echo ${original_repo_issue}
         echo ${original_project}
