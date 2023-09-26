@@ -18,8 +18,6 @@ jobs:
     
     - name: Set globals
       run: |
-        echo 'Prueba'
-        echo ${GITHUB_REF#refs/heads/}
         repo=${GITHUB_REPOSITORY#*/}
         original_repo_issue=${repo::-5}
         issue_name=${GITHUB_REF#refs/heads/}
@@ -41,6 +39,8 @@ jobs:
 
     - name: Checkout dev branch
       run: |
+        echo ${USERNAME}
+        echo ${original_project}
         git clone git@github.com:${USERNAME}/${original_project}.git
         git fetch --unshallow
         cd ${original_project}
