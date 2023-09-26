@@ -25,8 +25,7 @@ jobs:
         issue_name=${GITHUB_REF#refs/heads/}
         len_issue=$(( -${#issue_name}-1 ))
         original_project=${original_repo_issue::${len_issue}}
-        echo ${original_repo_issue}
-        echo ${original_project}
+        echo "original_project=$original_project" >> $GITHUB_ENV
         
     - name: Setup SSH keys
       run: |
@@ -42,9 +41,9 @@ jobs:
 
     - name: Checkout dev branch
       run: |
-        git clone git@github.com:${USERNAME}/<project_name>.git
+        git clone git@github.com:${USERNAME}/${original_project}.git
         git fetch --unshallow
-        cd <project_name>
+        cd ${original_project}
         git checkout ${GITHUB_REF#refs/heads/}
         
     - name: Merge and Push
