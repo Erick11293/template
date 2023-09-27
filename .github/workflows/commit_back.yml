@@ -41,7 +41,9 @@ jobs:
       run: |
         git clone git@github.com:${USERNAME}/${original_project}.git
         git fetch --unshallow
+        echo ${original_project}
         cd ${original_project}
+        ${GITHUB_REF#refs/heads/}
         git checkout ${GITHUB_REF#refs/heads/}
         
     - name: Merge and Push
