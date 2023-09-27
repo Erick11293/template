@@ -43,7 +43,7 @@ jobs:
         git fetch --unshallow
         echo ${original_project}
         cd ${original_project}
-        ${GITHUB_REF#refs/heads/}
+        echo ${GITHUB_REF#refs/heads/}
         git checkout ${GITHUB_REF#refs/heads/}
         
     - name: Merge and Push
