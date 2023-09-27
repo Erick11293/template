@@ -48,7 +48,7 @@ jobs:
         
     - name: Merge and Push
       run: |
-        cd <project_name>
+        cd ${original_project}
         git config pull.rebase false
         git config --global user.email $EMAIL
         git config --global user.name $USERNAME
