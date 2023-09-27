@@ -1,22 +1,30 @@
-name: Sync to Mirror Repository
+name: Sync Back to Dev Branch
 on:
   push:
     branches:
       - '*'
-env:
 
-  
+env:  
   EMAIL: ${{ secrets.email }}
   REPO_BRANCH: ${{ github.ref }}
   USERNAME: ${{ github.actor }}
 
-  
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    
-    steps:
 
+jobs:
+  sync_back:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Set globals
+      run: |
+        repo=${GITHUB_REPOSITORY#*/}
+        original_repo_issue=${repo::-5}
+        issue_name=${GITHUB_REF#refs/heads/}
+        len_issue=$(( -${#issue_name}-1 ))
+        original_project=${original_repo_issue::${len_issue}}
+        echo "original_project=$original_project" >> $GITHUB_ENV
+        
     - name: Setup SSH keys
       run: |
         mkdir -p ~/.ssh
@@ -24,21 +32,23 @@ jobs:
         chmod 600 ~/.ssh/id_ed25519
         ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-    - name: Checkout code
+    - name: Checkout code from mirror
       uses: actions/checkout@v2
       with:
         ref: ${{ env.REPO_BRANCH }}
 
-    - name: Checkout mirror repository
+    - name: Checkout dev branch
       run: |
-        git clone git@github.com:$USERNAME/${GITHUB_REPOSITORY#*/}_${GITHUB_REF#refs/heads/}_sync.git
+        git clone git@github.com:${USERNAME}/${original_project}.git
         git fetch --unshallow
-        cd ${GITHUB_REPOSITORY#*/}_${GITHUB_REF#refs/heads/}_sync
+        echo ${original_project}
+        cd ${original_project}
+        echo ${GITHUB_REF#refs/heads/}
         git checkout ${GITHUB_REF#refs/heads/}
-
+        
     - name: Merge and Push
       run: |
-        cd ${GITHUB_REPOSITORY#*/}_${GITHUB_REF#refs/heads/}_sync
+        cd ${original_project}
         git config pull.rebase false
         git config --global user.email $EMAIL
         git config --global user.name $USERNAME
