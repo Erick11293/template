@@ -39,8 +39,6 @@ jobs:
 
     - name: Checkout dev branch
       run: |
-        echo ${USERNAME}
-        echo ${original_project}
         git clone git@github.com:${USERNAME}/${original_project}.git
         git fetch --unshallow
         cd ${original_project}
